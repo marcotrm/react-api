@@ -1,4 +1,5 @@
-import { useState } from "react";
+import axios from "axios";
+import { useState, useEffect } from "react";
 
 function App() {
   //Stato che viene aggiornato dopo l'inserimento dei dati nel form
