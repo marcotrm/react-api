@@ -3,128 +3,69 @@ import { useState, useEffect } from "react";
 
 function App() {
   //Stato che viene aggiornato dopo l'inserimento dei dati nel form
-  const [formData, setFormData] = useState({
-    product: "",
-    author: "",
-    content: "",
-    category: "FrontEnd",
-    published: false,
-  });
+  const [formData, setFormData] = useState([]);
 
-  //"modifica" dei dati
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
+  function fetchData() {
+    axios
+      .get("http://localhost:3000/posts")
+      .then((res) => setFormData(res.data));
+  }
 
-  const submit = (e) => {
-    e.preventDefault();
-
-    //verifica dei campi vuoti
-    const { product, author, content, category } = formData;
-    if (!product.trim() || !author.trim() || !content.trim()) {
-      alert("Tutti i campi sono obbligatori!");
-      return;
-    }
-
-    //reset dei campi input
-    setList((current) => [...current, formData]);
-    setFormData({
-      product: "",
-      author: "",
-      content: "",
-      category: "FrontEnd",
-      published: false,
-    });
-  };
-
-  const [list, setList] = useState([
-    {
-      product: "Gallette",
-      author: "Mario",
-      content: "Snack leggero",
-      category: "UI/UX",
-      published: true,
-    },
-    {
-      product: "Pollo",
-      author: "Luigi",
-      content: "Proteina",
-      category: "BackEnd",
-      published: false,
-    },
-    {
-      product: "Yogurt",
-      author: "Anna",
-      content: "Colazione",
-      category: "FrontEnd",
-      published: true,
-    },
-  ]);
+  useEffect(fetchData, []);
 
   //funzione per rimuovere un "prodotto"
-  const handleDelete = (index) => {
-    setList((current) => current.filter((item, i) => i !== index));
-  };
+  function handleDelete(id) {
+    axios
+      .delete(`http://localhost:3000/posts${id}`)
+      .then(() =>
+        setFormData((current) => current.filter((item) => item.id !== id))
+      );
+  }
 
   return (
     <div className="container">
       <h1>Lista Spesa</h1>
       <ul>
-        {list.map((item, index) => (
+        {formData.map((item, index) => (
           <div key={index} className="list-container">
-            <button onClick={() => handleDelete(index)}>🗑</button>
             <li>
-              <strong>{item.product}</strong> - {item.author} ({item.category})
-              <p>{item.content}</p>
-              <p>{item.published ? "Pubblicato" : "Non Pubblicato"}</p>
+              <strong>{item.titolo}</strong> - {item.immagine} {item.contenuto}
+              <p>{item.tags}</p>
+              <div className="btn-delete-container">
+                <button onClick={() => handleDelete(item.id)}>🗑 Elimina</button>
+              </div>
             </li>
           </div>
         ))}
       </ul>
       <hr />
       <h2>Aggiungi Prodotto</h2>
-      <form onSubmit={submit}>
+      <form>
         <input
           type="text"
           name="product"
           value={formData.product}
-          onChange={handleChange}
           placeholder="Nome Prodotto"
         />
         <input
           type="text"
           name="author"
           value={formData.author}
-          onChange={handleChange}
           placeholder="Autore"
         />
         <input
           type="text"
           name="content"
           value={formData.content}
-          onChange={handleChange}
           placeholder="Descrizione"
         />
-        <select
-          name="category"
-          value={formData.category}
-          onChange={handleChange}
-        >
+        <select name="category" value={formData.category}>
           <option value="FrontEnd">FrontEnd</option>
           <option value="BackEnd">BackEnd</option>
           <option value="UI/UX">UI/UX</option>
         </select>
         <label>
-          <input
-            type="checkbox"
-            name="published"
-            checked={formData.published}
-            onChange={handleChange}
-          />
+          <input type="checkbox" name="published" />
           Pubblicato
         </label>
         <button type="submit">Invia</button>
