@@ -32,6 +32,10 @@ h2 {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
+.list-container div {
+  padding: 10px;
+}
+
 .list-container li {
   list-style: none;
   flex-grow: 1;
