@@ -54,15 +54,15 @@ function App() {
               <div>
                 <strong>{item.titolo}</strong>
               </div>
-              {item.immagine && (
-                <img
-                  src={item.immagine}
-                  alt={item.titolo}
-                  style={{ width: "100px" }}
-                />
-              )}
+              <img
+                src={item.immagine}
+                alt={item.titolo}
+                style={{ width: "100px" }}
+              />
               <div>{item.contenuto}</div>
-              <div>{item.tags}</div>
+              <p>
+                #{Array.isArray(item.tags) ? item.tags.join("#") : item.tags}
+              </p>
               <div className="btn-delete-container">
                 <button onClick={() => handleDelete(item.id)}>🗑 Elimina</button>
               </div>
